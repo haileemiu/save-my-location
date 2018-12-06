@@ -9,6 +9,7 @@
     "pg-promise": "^8.5.3",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
+    "react-redux": "^6.0.0",
     "react-root": "^2.0.1",
     "react-scripts": "2.1.1"
   },
