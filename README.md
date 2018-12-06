@@ -1,3 +1,9 @@
+# API routes
+ 1) POST single coordinate to database (as a point)
+ 1) GET coordinates from database (with time created)
+
+
+---
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

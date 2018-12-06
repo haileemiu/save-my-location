@@ -1,7 +1,13 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import './App.css';
 
 class App extends Component {
+  state = {
+    currentLatitude: 0,
+    currentLongitude: 0,
+  }
+
   // Click event handler for getting geolocation
   getLocation = () => {
     if (navigator.geolocation) {
@@ -21,8 +27,24 @@ class App extends Component {
   showLocation = (position) => {
     const { latitude, longitude } = position.coords;
 
-    console.log(`Latitude : ${latitude} Longitude: ${longitude}`);
+    console.log(`Latitude : ${latitude} Longitude: ${longitude}`); // FOR DEV
+
+    // Store to local state
+    this.setState({currentLatitude: latitude, currentLongitude: longitude});
+    
+    // Send to database
+    // axios({
+    //   method: 'POST', 
+    //   url: '/location',
+    //   data: position.coords
+    // }).then (response => {
+    //   console.log(response);
+    // }).catch (error => {
+    //   console.log(error);
+    // })
   }
+
+  
 
   // Error callback for getCurrentPosition
   errorHandler = (err) => {
@@ -45,4 +67,5 @@ class App extends Component {
   }
 }
 
-export default App;
+
+export default App; 
