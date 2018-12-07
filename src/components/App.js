@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import './App.css';
-// import MapContainer from './mapContainer';
-import { Map, InfoWindow, Marker, GoogleApiWrapper } from 'google-maps-react';
+import { Map, Marker, GoogleApiWrapper } from 'google-maps-react';
 
 class App extends Component {
   state = {
-    location: { latitude: 44, longitude: -90}, 
-    currentLongitude: 30,
-    currentLatitude: -50,
+    currentLatitude: 45.428970,
+    currentLongitude: -84.994059,
     listOfLocations: [],
   }
 
@@ -40,6 +38,7 @@ class App extends Component {
 
   }
 
+  // Call on click of "Where Am I?" button
   addLocationToDb = () => {
     axios({
       method: 'POST',
@@ -75,10 +74,6 @@ class App extends Component {
   //   })
   // }
 
-  componentDidMount() {
-    // this.showLocationList();
-  }
-
 
   render() {
     return (
@@ -89,19 +84,31 @@ class App extends Component {
         {/* <button onClick={this.showLocationList} type="button">Where have I been?</button> */}
         {/* <div>{this.state.listOfLocations}</div> */}
 
-        <Map 
-          google={this.props.google} zoom={14}
-          initialCenter={{ lat: this.state.location.latitude, lng: this.state.location.longitude }}
-          // onClick={this.onMapClicked}
-          >
+        <Map
+          google={this.props.google}
 
-          <Marker onClick={this.onMarkerClick}
-            name={'Current location'} />
+          center={{
+            lat: this.state.currentLatitude,
+            lng: this.state.currentLongitude
+          }}
+          zoom={15}
 
-          <InfoWindow onClose={this.onInfoWindowClose}>
+          style={{height: '75%', width: '75%'}}
+        >
 
-          </InfoWindow>
+          <Marker
+
+            position={{
+              lat: this.state.currentLatitude,
+              lng: this.state.currentLongitude
+            }}
+          />
+
+
+
+
         </Map>
+
 
       </div>
     );
