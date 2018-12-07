@@ -8,11 +8,11 @@ const getLocations = () => {
 }
 
 // Add current location longitude and latitude to db
-const addLocation = (longitude, latitude) => {
+const addLocation = (latitude, longitude) => {
     const query = `INSERT INTO "location" ("coordinates") 
     VALUES ($1);`;
 
-    return db.none(query, [longitude + ',' + latitude]);
+    return db.none(query, [ latitude + ',' + longitude]);
 }
 
 module.exports = { getLocations, addLocation };

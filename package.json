@@ -2,10 +2,12 @@
   "name": "save-my-location",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:5000",
   "dependencies": {
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
+    "google-maps-react": "^2.0.2",
     "pg-promise": "^8.5.3",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",

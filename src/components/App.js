@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import './App.css';
+// import MapContainer from './mapContainer';
+import { Map, InfoWindow, Marker, GoogleApiWrapper } from 'google-maps-react';
 
 class App extends Component {
   state = {
-    currentLongitude: 0,
-    currentLatitude: 0,
+    location: { latitude: 44, longitude: -90}, 
+    currentLongitude: 30,
+    currentLatitude: -50,
     listOfLocations: [],
   }
 
@@ -42,11 +45,11 @@ class App extends Component {
       method: 'POST',
       url: '/location',
       data: { longitude: this.state.currentLatitude, latitude: this.state.currentLatitude }
-      }).then(response => {
-        console.log(response);
-      }).catch(error => {
-        console.log(error);
-      })
+    }).then(response => {
+      console.log(response);
+    }).catch(error => {
+      console.log(error);
+    })
   }
 
 
@@ -60,21 +63,22 @@ class App extends Component {
   }
 
   // 
-  showLocationList = () => {
-    axios({
-      method: 'GET',
-      url: '/location'
-    }).then((response) => {
-      console.log(response.data); // FOR DEV
-      // this.setState({ listOfLocations: response});
-    }).catch((error) => {
-      console.log('Error in getting locations:', error);
-    })
-  }
+  // showLocationList = () => {
+  //   axios({
+  //     method: 'GET',
+  //     url: '/location'
+  //   }).then((response) => {
+  //     console.log(response.data); // FOR DEV
+  //     // this.setState({ listOfLocations: response});
+  //   }).catch((error) => {
+  //     console.log('Error in getting locations:', error);
+  //   })
+  // }
 
   componentDidMount() {
     // this.showLocationList();
   }
+
 
   render() {
     return (
@@ -85,10 +89,25 @@ class App extends Component {
         {/* <button onClick={this.showLocationList} type="button">Where have I been?</button> */}
         {/* <div>{this.state.listOfLocations}</div> */}
 
+        <Map 
+          google={this.props.google} zoom={14}
+          initialCenter={{ lat: this.state.location.latitude, lng: this.state.location.longitude }}
+          // onClick={this.onMapClicked}
+          >
+
+          <Marker onClick={this.onMarkerClick}
+            name={'Current location'} />
+
+          <InfoWindow onClose={this.onInfoWindowClose}>
+
+          </InfoWindow>
+        </Map>
+
       </div>
     );
   }
 }
 
-
-export default App; 
+export default GoogleApiWrapper({
+  apiKey: ('AIzaSyBYyvydky__C8w6EbQbD8hhUwlI0mxnEbE')
+})(App)
