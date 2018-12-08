@@ -3,7 +3,7 @@ import axios from 'axios';
 import './App.css';
 import { Map, Marker, GoogleApiWrapper } from 'google-maps-react';
 
-const defaultLocation = { latitude: 44.977753, longitude: -93.265015 }
+const defaultLocation = { latitude: 44.977753, longitude: -93.265015 };
 
 class App extends Component {
   state = {
@@ -11,7 +11,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.showLocationList()
+    this.getLocationList();
   }
 
   // Click event handler for getting geolocation
@@ -20,8 +20,8 @@ class App extends Component {
       // timeout at 60000 milliseconds (60 seconds)
       const options = { timeout: 60000 };
       navigator.geolocation.getCurrentPosition(
-        this.showLocation,
-        this.errorHandler,
+        this.getCurrentPositionSuccess,
+        this.getCurrentPositionError,
         options,
       );
     } else {
@@ -30,32 +30,26 @@ class App extends Component {
   }
 
   // Success callback for getCurrentPosition
-  showLocation = (position) => {
+  getCurrentPositionSuccess = (position) => {
     const { latitude, longitude } = position.coords;
 
     // Store to local state
-    this.setState((state) => {
-      return { listOfLocations: [{ latitude, longitude, created: (new Date()).toISOString() }, ...state.listOfLocations] }
-    });
+    this.setState(state => ({
+      listOfLocations: [
+        {
+          latitude,
+          longitude,
+          created: (new Date()).toISOString(),
+        },
+        ...state.listOfLocations,
+      ],
+    }));
 
-    this.addLocationToDb(position.coords);
-  }
-
-  // Call on click of "Where Am I?" button
-  addLocationToDb = ({ latitude, longitude }) => {
-    axios({
-      method: 'POST',
-      url: '/location',
-      data: { latitude, longitude }
-    }).then(response => {
-      console.log(response);
-    }).catch(error => {
-      console.log(error);
-    })
+    this.addLocation(position.coords);
   }
 
   // Error callback for getCurrentPosition
-  errorHandler = (err) => {
+  getCurrentPositionError = (err) => {
     if (err.code === 1) {
       console.log('Error: Access is denied!');
     } else if (err.code === 2) {
@@ -63,34 +57,65 @@ class App extends Component {
     }
   }
 
-  // 
-  showLocationList = () => {
-    axios({
+  // Call on click of "Where Am I?" button
+  addLocation = ({ latitude, longitude }) => {
+    const request = {
+      method: 'POST',
+      url: '/location',
+      data: { latitude, longitude },
+    };
+
+    axios(request)
+      .then(this.addLocationSuccess)
+      .catch(this.addLocationError);
+  }
+
+  // Success callback for adding location
+  addLocationSuccess = (response) => {
+    console.log(response);
+  }
+
+  // Error callback for adding location
+  addLocationError = (error) => {
+    console.log(error);
+  }
+
+  // Retrieves list of locations from the API
+  getLocationList = () => {
+    const request = {
       method: 'GET',
-      url: '/location'
-    }).then((response) => {
-      console.log(response.data); // FOR DEV
+      url: '/location',
+    };
 
-      const location = response.data.map((item) => {
-        return {latitude: item.coordinates.x, longitude: item.coordinates.y, created: item.created}
-      })
-
-      this.setState((state) => {
-        return { listOfLocations: [...state.listOfLocations, ...location] }
-      });
-    }).catch((error) => {
-      console.log('Error in getting locations:', error);
-    })
+    axios(request)
+      .then(this.getLocationListSuccess)
+      .catch(this.getLocationListError);
   }
 
 
+  // Success callback from getting location list
+  getLocationListSuccess = (response) => {
+    const location = response.data.map(item => ({
+      latitude: item.coordinates.x,
+      longitude: item.coordinates.y,
+      created: item.created,
+    }));
+
+    this.setState(state => ({ listOfLocations: [...state.listOfLocations, ...location] }));
+  }
+
+  // Error callback for getting location list
+  getLocationListError = (error) => {
+    console.log('Error in getting locations:', error);
+  }
+
   render() {
     let center;
-    console.log(this.state)
+    console.log(this.state);
     if (this.state.listOfLocations[0]) {
       center = {
         lat: this.state.listOfLocations[0].latitude,
-        lng: this.state.listOfLocations[0].longitude
+        lng: this.state.listOfLocations[0].longitude,
       };
     }
 
@@ -104,27 +129,29 @@ class App extends Component {
             google={this.props.google}
             initialCenter={{
               lat: defaultLocation.latitude,
-              lng: defaultLocation.longitude
+              lng: defaultLocation.longitude,
             }}
             center={center}
             zoom={15}
             style={{ height: '50%', width: '100%' }}
           >
-            {this.state.listOfLocations[0] ?
-              <Marker
-                position={center}
-              /> : null
+            {this.state.listOfLocations[0]
+              ? (
+                <Marker
+                  position={center}
+                />
+              ) : null
             }
           </Map>
         </div>
         {/* List of places I have been */}
         <p>Previous Locations</p>
         <ul>
-          {this.state.listOfLocations.map((location) =>
+          {this.state.listOfLocations.map(location => (
             <li key={location.created}>
-              ({location.latitude}, {location.longitude}) 
+              ({location.latitude}, {location.longitude})
             </li>
-          )}
+          ))}
         </ul>
 
       </>
@@ -133,5 +160,5 @@ class App extends Component {
 }
 
 export default GoogleApiWrapper({
-  apiKey: ('')
-})(App)
+  apiKey: (process.env.REACT_APP_GOOGLE_MAP_KEY),
+})(App);
