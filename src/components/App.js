@@ -124,7 +124,7 @@ class App extends Component {
         <h1>Save My Location</h1>
 
         <button onClick={this.getLocation} type="button">Where am I?</button>
-        <div style={{ marginBottom: '50%', height: '2rem' }}>
+        <div style={{ position: 'relative', height: 600 }}>
           <Map
             google={this.props.google}
             initialCenter={{
@@ -133,7 +133,6 @@ class App extends Component {
             }}
             center={center}
             zoom={15}
-            style={{ height: '50%', width: '100%' }}
           >
             {this.state.listOfLocations[0]
               ? (
