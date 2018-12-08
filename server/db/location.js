@@ -2,7 +2,7 @@ const db = require('.');
 
 // Get all locations from db
 const getLocations = () => {
-    const query = 'SELECT * FROM "location";';
+    const query = 'SELECT "coordinates", "created" FROM "location" ORDER BY "created";'; // Default order ascending
 
     return db.any(query);
 }
@@ -12,7 +12,7 @@ const addLocation = (latitude, longitude) => {
     const query = `INSERT INTO "location" ("coordinates") 
     VALUES ($1);`;
 
-    return db.none(query, [ latitude + ',' + longitude]);
+    return db.none(query, [`(${latitude}, ${longitude})`]);
 }
 
 module.exports = { getLocations, addLocation };

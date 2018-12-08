@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
 // Add location to db
 router.post('/', (req, res) => {
     console.log(req.body); // FOR DEV
-    locationDb.addLocation(req.body.longitude, req.body.latitude)
+    locationDb.addLocation(req.body.latitude, req.body.longitude)
         .then(() => { res.sendStatus(200) })
         .catch((error) => {
             console.log('Error in adding location:', error);

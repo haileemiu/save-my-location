@@ -3,11 +3,15 @@ import axios from 'axios';
 import './App.css';
 import { Map, Marker, GoogleApiWrapper } from 'google-maps-react';
 
+const defaultLocation = { latitude: 44.977753, longitude: -93.265015 }
+
 class App extends Component {
   state = {
-    currentLatitude: 45.428970,
-    currentLongitude: -84.994059,
     listOfLocations: [],
+  }
+
+  componentDidMount() {
+    this.showLocationList()
   }
 
   // Click event handler for getting geolocation
@@ -29,28 +33,26 @@ class App extends Component {
   showLocation = (position) => {
     const { latitude, longitude } = position.coords;
 
-    console.log(`Longitude: ${longitude} Latitude : ${latitude}`); // FOR DEV
-
     // Store to local state
-    this.setState({ currentLatitude: latitude, currentLongitude: longitude });
+    this.setState((state) => {
+      return { listOfLocations: [{ latitude, longitude, created: (new Date()).toISOString() }, ...state.listOfLocations] }
+    });
 
-    this.addLocationToDb();
-
+    this.addLocationToDb(position.coords);
   }
 
   // Call on click of "Where Am I?" button
-  addLocationToDb = () => {
+  addLocationToDb = ({ latitude, longitude }) => {
     axios({
       method: 'POST',
       url: '/location',
-      data: { longitude: this.state.currentLatitude, latitude: this.state.currentLatitude }
+      data: { latitude, longitude }
     }).then(response => {
       console.log(response);
     }).catch(error => {
       console.log(error);
     })
   }
-
 
   // Error callback for getCurrentPosition
   errorHandler = (err) => {
@@ -62,55 +64,70 @@ class App extends Component {
   }
 
   // 
-  // showLocationList = () => {
-  //   axios({
-  //     method: 'GET',
-  //     url: '/location'
-  //   }).then((response) => {
-  //     console.log(response.data); // FOR DEV
-  //     // this.setState({ listOfLocations: response});
-  //   }).catch((error) => {
-  //     console.log('Error in getting locations:', error);
-  //   })
-  // }
+  showLocationList = () => {
+    axios({
+      method: 'GET',
+      url: '/location'
+    }).then((response) => {
+      console.log(response.data); // FOR DEV
+
+      const location = response.data.map((item) => {
+        return {latitude: item.coordinates.x, longitude: item.coordinates.y, created: item.created}
+      })
+
+      this.setState((state) => {
+        return { listOfLocations: [...state.listOfLocations, ...location] }
+      });
+    }).catch((error) => {
+      console.log('Error in getting locations:', error);
+    })
+  }
 
 
   render() {
+    let center;
+    console.log(this.state)
+    if (this.state.listOfLocations[0]) {
+      center = {
+        lat: this.state.listOfLocations[0].latitude,
+        lng: this.state.listOfLocations[0].longitude
+      };
+    }
+
     return (
-      <div className="App">
+      <>
         <h1>Save My Location</h1>
 
         <button onClick={this.getLocation} type="button">Where am I?</button>
-        {/* <button onClick={this.showLocationList} type="button">Where have I been?</button> */}
-        {/* <div>{this.state.listOfLocations}</div> */}
-
-        <Map
-          google={this.props.google}
-
-          center={{
-            lat: this.state.currentLatitude,
-            lng: this.state.currentLongitude
-          }}
-          zoom={15}
-
-          style={{height: '75%', width: '75%'}}
-        >
-
-          <Marker
-
-            position={{
-              lat: this.state.currentLatitude,
-              lng: this.state.currentLongitude
+        <div style={{ marginBottom: '50%', height: '2rem' }}>
+          <Map
+            google={this.props.google}
+            initialCenter={{
+              lat: defaultLocation.latitude,
+              lng: defaultLocation.longitude
             }}
-          />
+            center={center}
+            zoom={15}
+            style={{ height: '50%', width: '100%' }}
+          >
+            {this.state.listOfLocations[0] ?
+              <Marker
+                position={center}
+              /> : null
+            }
+          </Map>
+        </div>
+        {/* List of places I have been */}
+        <p>Previous Locations</p>
+        <ul>
+          {this.state.listOfLocations.map((location) =>
+            <li key={location.created}>
+              ({location.latitude}, {location.longitude}) 
+            </li>
+          )}
+        </ul>
 
-
-
-
-        </Map>
-
-
-      </div>
+      </>
     );
   }
 }
