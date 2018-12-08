@@ -111,7 +111,7 @@ class App extends Component {
 
   render() {
     let center;
-    console.log(this.state);
+
     if (this.state.listOfLocations[0]) {
       center = {
         lat: this.state.listOfLocations[0].latitude,
@@ -120,7 +120,7 @@ class App extends Component {
     }
 
     return (
-      <>
+      <div className="App">
         <h1>Save My Location</h1>
 
         <button onClick={this.getLocation} type="button">Where am I?</button>
@@ -154,7 +154,7 @@ class App extends Component {
           ))}
         </ul>
 
-      </>
+      </div>
     );
   }
 }
