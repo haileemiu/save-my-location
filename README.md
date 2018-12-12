@@ -7,9 +7,9 @@ A code challenge to find, pin, store, and show locations.
 - postgresQL
 - create react app
 - Javascript (ES6)
-  - JS Navigator Geolocation Property
+  - [JS Navigator Geolocation Property](https://www.w3schools.com/jsref/prop_nav_geolocation.asp)
 - Google Maps API
-- google-maps-react
+- [google-maps-react](https://github.com/fullstackreact/google-maps-react/blob/master/README.md)
 - Air B&B linting standards
 
 ### API routes
