@@ -19,6 +19,7 @@ class App extends Component {
     if (navigator.geolocation) {
       // timeout at 60000 milliseconds (60 seconds)
       const options = { timeout: 60000 };
+
       navigator.geolocation.getCurrentPosition(
         this.getCurrentPositionSuccess,
         this.getCurrentPositionError,
@@ -92,7 +93,6 @@ class App extends Component {
       .catch(this.getLocationListError);
   }
 
-
   // Success callback from getting location list
   getLocationListSuccess = (response) => {
     const location = response.data.map(item => ({
@@ -102,6 +102,7 @@ class App extends Component {
     }));
 
     this.setState(state => ({ listOfLocations: [...state.listOfLocations, ...location] }));
+    console.log(this.state.listOfLocations);
   }
 
   // Error callback for getting location list
@@ -134,6 +135,7 @@ class App extends Component {
             center={center}
             zoom={15}
           >
+            {/* Needed so that does not default to the google location */}
             {this.state.listOfLocations[0]
               ? (
                 <Marker
@@ -143,6 +145,7 @@ class App extends Component {
             }
           </Map>
         </div>
+
         {/* List of places I have been */}
         <p>Previous Locations</p>
         <ul>

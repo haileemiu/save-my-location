@@ -9,6 +9,7 @@ A code challenge to find, pin, store, and show locations.
 - Javascript (ES6)
   - JS Navigator Geolocation Property
 - Google Maps API
+- google-maps-react
 - Air B&B linting standards
 
 ### API routes
@@ -17,5 +18,5 @@ A code challenge to find, pin, store, and show locations.
  
 ### To Do
 - [ ] delete individual locations
-- [ ] show something other than latitude and longitude
-- [ ] link back to the pin
+- [ ] show something other than latitude and longitude (reverse geocode)
+- [ ] link back to the pin when click on previous locations
